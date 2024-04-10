@@ -1,0 +1,46 @@
+import tensorflow as tf
+from tensorflow.keras import layers, models
+
+# Define the CNN model architecture
+def create_food_recognition_model(input_shape, num_classes):
+    model = models.Sequential()
+    model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=input_shape))
+    model.add(layers.MaxPooling2D((2, 2)))
+    model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+    model.add(layers.MaxPooling2D((2, 2)))
+    model.add(layers.Conv2D(128, (3, 3), activation='relu'))
+    model.add(layers.MaxPooling2D((2, 2)))
+    model.add(layers.Flatten())
+    model.add(layers.Dense(512, activation='relu'))
+    model.add(layers.Dense(num_classes, activation='softmax'))
+    return model
+
+# Define the regression model for calorie estimation
+def create_calorie_estimation_model(input_shape):
+    model = models.Sequential()
+    model.add(layers.Dense(256, activation='relu', input_shape=input_shape))
+    model.add(layers.Dense(128, activation='relu'))
+    model.add(layers.Dense(1, activation='linear'))  # Output layer for calorie estimation
+    return model
+
+# Load and preprocess the dataset (not shown)
+
+# Create and compile the food recognition model
+input_shape = (224, 224, 3)  # Example input shape for image size 224x224 pixels
+num_classes = num_food_classes  # Number of food classes
+food_recognition_model = create_food_recognition_model(input_shape, num_classes)
+food_recognition_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+
+# Create and compile the calorie estimation model
+calorie_estimation_model = create_calorie_estimation_model(input_shape=(num_classes,))
+calorie_estimation_model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mae'])
+
+# Train the food recognition model
+food_recognition_model.fit(x_train, y_train, epochs=10, batch_size=32, validation_data=(x_val, y_val))
+
+# Train the calorie estimation model
+calorie_estimation_model.fit(x_train, calorie_labels_train, epochs=10, batch_size=32, validation_data=(x_val, calorie_labels_val))
+
+# Evaluate the models (not shown)
+
+# Save the models for deployment (not shown)
